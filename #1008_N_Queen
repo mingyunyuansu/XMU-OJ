@@ -1,0 +1,50 @@
+import java.util.Scanner;
+ 
+/**
+ * Created by mingy on 2016-03-26.
+ */
+public class Main {
+    public static int count = 0, n;
+    public static int[] queen = new int[14];
+    public static int[] result = new int[14];
+ 
+    public static boolean ifAvailable(int row, int col) {
+        for (int i = 1; i < row; ++i)//此处i的截至条件不能是i <= row，非常坑爹，因为从i = 1 开始，本身就会多循环一次，注意体会。
+            if (queen[i] == col || queen[i] - col == i - row || queen[i] - col == row - i)
+                return false;
+        return true;
+    }
+ 
+    public static void find(int row) {
+        if (row > n) {
+            count++;
+            if (count == 1)
+                System.arraycopy(queen, 1, result, 1, 13);
+        } else {
+            for (int col = 1; col <= n; col++) {
+                if (ifAvailable(row, col)) {
+                    queen[row] = col;
+                    find(row + 1);
+                }
+            }
+        }
+    }
+ 
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        n = input.nextInt();
+        find(1);
+        System.out.println(count);
+        if (count != 0)
+            for (int i = 1; i <= n; ++i)
+                System.out.println(i + " " + result[i]);
+    }
+}
+/**************************************************************
+    Problem: 1008
+    User: 22920142203903
+    Language: Java
+    Result: Accepted
+    Time:1187 ms
+    Memory:21500 kb
+****************************************************************/

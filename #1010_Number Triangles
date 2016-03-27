@@ -1,0 +1,43 @@
+import java.util.Scanner;
+
+/**
+ * Created by mingy on 2016/3/22.
+ */
+ //这次就全是自己写的了，什么都没有参考，一次就很AC了很愉悦，用DP挺简单的
+public class Quiz {
+    public static int maxOfArray(int[] a) {
+        int max = a[0];
+        for (int i = 0; i < a.length; ++i)
+            if (max < a[i])
+                max = a[i];
+        return max;
+    }
+
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        final int n = input.nextInt();
+        int[][] x = new int[n + 2][n + 2];
+        int[][] f = new int[n + 2][n + 2];
+
+        for (int i = 1; i <= n; ++i)
+            for (int j = 1; j <= i; ++j)
+                x[i][j] = input.nextInt();
+
+        for (int i = 1; i <= n; ++i)
+            for (int j = 1; j <= i; ++j)
+                f[i][j] = x[i][j];
+
+        for (int i = 1; i <= n; ++i) {
+            for (int j = 1; j <= i; ++j) {
+                f[i][j] = x[i][j] + Math.max(f[i - 1][j], f[i - 1][j - 1]);
+            }
+        }
+
+        System.out.print(maxOfArray(f[n]));
+       /* for (int i = 1; i <= n; ++i) {
+            for (int j = 1; j <= n; ++j)
+                System.out.print(f[i][j] + " ");
+            System.out.println();
+        }*/
+    }
+}

@@ -1,0 +1,46 @@
+import java.util.Scanner;
+ 
+/**
+ * Created by mingy on 2016/3/22.
+ */
+public class Main {
+    public static int n;
+    public static int[] queen = new int[21];
+ 
+    public static boolean isAvailable(int row, int col) {
+        for (int i = 1; i < row; ++i)
+            if (queen[i] == col || Math.abs(col - queen[i]) == Math.abs(row - i))
+                return false;
+        return true;
+    }
+ 
+    public static void find(int row) {
+        if (row > n) {
+            for (int i = 1; i <= n; ++i)
+                System.out.println(i + " " + queen[i]);
+            System.exit(0);//为防止超时，找到一组解后直接中断程序
+        }
+        else {
+            for (int j = 1; j <= n; ++j)
+                if (isAvailable(row, j)) {
+                    queen[row] = j;
+                    find(row + 1);
+                }
+        }
+    }
+ 
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        n = input.nextInt();
+        find(1);
+    }
+}
+ 
+/**************************************************************
+    Problem: 1098
+    User: 22920142203903
+    Language: Java
+    Result: Accepted
+    Time:215 ms
+    Memory:18308 kb
+****************************************************************/

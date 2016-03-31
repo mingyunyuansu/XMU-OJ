@@ -1,0 +1,46 @@
+#include <iostream>
+#include <cstring>
+#include <cmath>
+
+using namespace std;
+
+void make_list(int MAX_NUM, bool * primeList){
+    for (int i = 2; i <= sqrt(MAX_NUM); ++i){
+        if (primeList[i]){
+            for (int k = i * i; k < MAX_NUM; k += i)
+                primeList[k] = false;
+        }
+    }
+}
+
+bool isPrime(int number, bool * primeList){
+    if (primeList[number])
+        return true;
+    else
+        return false;
+}
+
+bool isSuperPrime(int number, bool * primeList){
+    while(number > 0){
+        if (!isPrime(number, primeList))
+            return false;
+        number /= 10;
+    }
+    return true;
+}
+
+int main(){
+    int n, s, e;
+    cin >> n;
+    s = (int)pow(10, n - 1);
+    e = s * 10;
+    bool* primeList = new bool[e];
+    memset(primeList, true, e * sizeof(primeList[0]));
+    primeList[0] = false;
+    primeList[1] = false;
+    make_list(e, primeList);
+    for (int i = s; i < e; ++i)
+        if (isSuperPrime(i, primeList))
+            cout << i <<endl;
+    return 0;
+}

@@ -1,0 +1,54 @@
+#include <iostream>
+using namespace std;
+ 
+int main(){
+    int n, n50, n10, n5, n1, n05, n01, count = 0;
+    int left;
+    cin >> n;
+    left = 1000 - n * 25;
+    cin >> n50 >> n10 >> n5 >> n1 >> n05 >> n01;
+    while (left >= 500 && n50 > 0){
+        left -= 500;
+        n50--;
+        count++;
+    }
+    while (left >= 100 && n10 > 0){
+        left -= 100;
+        n10--;
+        count++;
+    }
+    while (left >= 50 && n5 > 0){
+        left -= 50;
+        n5--;
+        count++;
+    }
+    while (left >= 10 && n1 > 0){
+        left -= 10;
+        n1--;
+        count++;
+    }
+    while (left >= 5 && n05 > 0){
+        left -= 5;
+        n05--;
+        count++;
+    }
+    while (left >= 1 && n01 > 0){
+        left -= 1;
+        n01--;
+        count++;
+    }
+ 
+    if (left == 0)
+        cout << count;
+    else
+        cout << -1;
+    return 0;
+}
+/**************************************************************
+    Problem: 1062
+    User: 22920142203903
+    Language: C++
+    Result: Accepted
+    Time:0 ms
+    Memory:1500 kb
+****************************************************************/

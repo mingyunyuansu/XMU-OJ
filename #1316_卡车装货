@@ -1,0 +1,50 @@
+#include <iostream>
+#include <algorithm>
+ 
+using namespace std;
+ 
+struct Good {
+    int w, v;
+    double p;
+};
+ 
+bool cmp(Good a, Good b){
+    return a.p < b.p;
+}
+ 
+int main() {
+    int M, N;
+    double V = 0;
+    cin >> M >> N;
+    Good goods[100001];
+    for (int i = 1; i <= N; ++i) {
+        cin >> goods[i].w >> goods[i].v;
+        goods[i].p = (double) goods[i].v / goods[i].w;
+    }
+ 
+    sort(goods + 1, goods + N + 1, cmp);
+ 
+ 
+    for (int i = N; i >= 0 && M > 0; --i) {
+        if (M >= goods[i].w) {
+            V += goods[i].v;
+            M -= goods[i].w;
+        }
+        else {
+            V += M * goods[i].p;
+            M = 0;
+        }
+    }
+    printf("%.6f", V);
+    //for (int i = 1; i <= N; ++i)
+     //   cout << goods[i].p << endl;
+    return 0;
+}
+/**************************************************************
+    Problem: 1316
+    User: 22920142203903
+    Language: C++
+    Result: Accepted
+    Time:83 ms
+    Memory:2996 kb
+****************************************************************/

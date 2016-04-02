@@ -1,0 +1,58 @@
+//
+// Created by mingy on 2016-04-02.
+//
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+string s;
+vector<char> new_s;
+
+struct Node {
+    int weight = 0;
+    char ch;
+    bool flag = true;
+    Node *left = NULL;
+    Node *right = NULL;
+};
+
+bool isNewCh(char ch) {
+    for (int i = 0; i < new_s.size(); ++i)
+        if (ch == new_s[i])
+            return false;
+    return true;
+}
+
+int main() {
+    cin >> s;
+    for (int i = 0; i < s.length(); ++i)
+        if (isNewCh(s[i]))
+            new_s.push_back(s[i]);
+    cout << new_s.size() << endl;
+
+    Node* eachCh = new Node[new_s.size()];
+
+    for (int i = 0; i < new_s.size(); ++i)
+        eachCh[i].ch = new_s[i];
+
+    for (int i = 0; i < new_s.size(); ++i)
+        for (int j = 0; j < s.size(); ++j)
+            if (s[j] == new_s[i])
+                eachCh[i].weight++;
+
+    for (int i = 1; i < new_s.size(); ++i){
+        Node tmp;
+        int j = i;
+        tmp = eachCh[i];
+        for (; j > 0; --j){
+            if (tmp.weight < eachCh[j - 1].weight)
+                eachCh[j] = eachCh[j - 1];
+        }
+        eachCh[j] = tmp;
+    }
+
+    /*for (int i = 0; i < new_s.size(); ++i)
+        cout << eachCh[i].weight << " ";
+        return 0;*/
+}

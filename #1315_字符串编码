@@ -3,56 +3,105 @@
 //
 #include <iostream>
 #include <vector>
-
+#include <queue>
+ 
 using namespace std;
-
+ 
 string s;
 vector<char> new_s;
-
+string table[256];
+ 
 struct Node {
-    int weight = 0;
+    int weight;
     char ch;
-    bool flag = true;
-    Node *left = NULL;
-    Node *right = NULL;
+    Node *left;
+    Node *right;
+    Node():left(NULL), right(NULL), ch('0'), weight(0){}
 };
-
+ 
+struct cmp_each_char{
+    bool operator()(Node *a, Node *b){
+        return a->weight > b->weight;
+    }
+};
+priority_queue <Node*, vector<Node*>, cmp_each_char> pq_Nodes;
+ 
 bool isNewCh(char ch) {
     for (int i = 0; i < new_s.size(); ++i)
         if (ch == new_s[i])
             return false;
     return true;
 }
-
+ 
+void show(Node* x){
+    if(x->left == NULL && x->right == NULL){
+        cout <<x->ch << "\t" <<x->weight<< endl;
+        return;
+    }
+    show(x->left);
+    show(x->right);
+}
+ 
+void buildTable(Node* x, string st){
+    if(x->left == NULL && x->right == NULL){
+        table[x->ch] = st;
+        return;
+    }
+    buildTable(x->left, st + "1");
+    buildTable(x->right, st + "0");
+}
+ 
 int main() {
     cin >> s;
     for (int i = 0; i < s.length(); ++i)
         if (isNewCh(s[i]))
             new_s.push_back(s[i]);
-    cout << new_s.size() << endl;
-
-    Node* eachCh = new Node[new_s.size()];
-
-    for (int i = 0; i < new_s.size(); ++i)
-        eachCh[i].ch = new_s[i];
-
+ 
+    vector <Node> each_char;
+ 
+    for (int i = 0; i < new_s.size(); ++i) {
+        Node * new_char = new Node();
+        new_char->ch = new_s[i];
+        each_char.push_back(*new_char);
+    }
+ 
     for (int i = 0; i < new_s.size(); ++i)
         for (int j = 0; j < s.size(); ++j)
             if (s[j] == new_s[i])
-                eachCh[i].weight++;
-
-    for (int i = 1; i < new_s.size(); ++i){
-        Node tmp;
-        int j = i;
-        tmp = eachCh[i];
-        for (; j > 0; --j){
-            if (tmp.weight < eachCh[j - 1].weight)
-                eachCh[j] = eachCh[j - 1];
-        }
-        eachCh[j] = tmp;
+                each_char[i].weight++;
+ 
+    for (int i = 0; i < new_s.size(); ++i)
+        pq_Nodes.push(&each_char[i]);
+ 
+    while(pq_Nodes.size() > 1){
+        Node * a= pq_Nodes.top();
+        pq_Nodes.pop();
+        Node * b = pq_Nodes.top();
+        pq_Nodes.pop();
+        Node * parent = new Node();
+        parent->weight = b->weight + a->weight;
+        parent->left = b;
+        parent->right = a;
+        pq_Nodes.push(parent);
     }
-
-    /*for (int i = 0; i < new_s.size(); ++i)
-        cout << eachCh[i].weight << " ";
-        return 0;*/
+ 
+    buildTable(pq_Nodes.top(), "");
+ 
+    int count = 0;
+    for (int i = 0; i < s.size(); ++i)
+        count += table[s[i]].size();
+ 
+    if (new_s.size() == 1)
+        count = s.size();
+    cout << count << endl;
+    return 0;
 }
+ 
+/**************************************************************
+    Problem: 1315
+    User: 22920142203903
+    Language: C++
+    Result: Accepted
+    Time:74 ms
+    Memory:1772 kb
+****************************************************************/

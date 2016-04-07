@@ -1,0 +1,22 @@
+import java.math.BigInteger;
+import java.util.Scanner;
+ 
+public class Main{
+    public static void main(String[] args){
+        String a, b;
+        Scanner input = new Scanner(System.in);
+        a = input.next();
+        b = input.next();
+        BigInteger n1 = new BigInteger(a);
+        BigInteger n2 = new BigInteger(b);
+        System.out.print(n1.add(n2));
+    }
+}
+/**************************************************************
+    Problem: 1006
+    User: 22920142203903
+    Language: Java
+    Result: Accepted
+    Time:122 ms
+    Memory:17680 kb
+****************************************************************/

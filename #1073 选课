@@ -1,0 +1,90 @@
+#include <iostream>
+#include <vector>
+#include <cstring>
+ 
+using namespace std;
+struct Vertex {
+    string name;
+    int p[500];
+    int in_degree;
+};
+Vertex subjects[501];
+vector<Vertex> set_of_zero_degree;
+vector<Vertex> result;
+ 
+void add_vertex(int id, int tmp) {
+    int i = 0;
+    while (subjects[tmp].p[i] != 0)
+        i++;
+    subjects[tmp].p[i] = id;
+}
+ 
+void make_vertex(int id, int in_degree) {
+    for (int i = 0; i < in_degree; ++i) {
+        int tmp;
+        cin >> tmp;
+        add_vertex(id, tmp);
+    }
+}
+ 
+int main() {
+    int number;
+    cin >> number;
+    for (int i = 1; i <= number; ++i) {
+        cin >> subjects[i].name;
+        memset(subjects[i].p, 0, sizeof(int) * 500);
+        subjects[i].in_degree = 0;
+    }
+ 
+    for (int i = 1; i <= number; ++i) {
+        cin >> subjects[i].in_degree;
+        make_vertex(i, subjects[i].in_degree);
+    }
+    for (int i = 1; i <= number; ++i) {
+        if (0 == subjects[i].in_degree) {
+            set_of_zero_degree.push_back(subjects[i]);
+        }
+    }
+    while (!set_of_zero_degree.empty()) {
+        Vertex t = set_of_zero_degree.back();
+        set_of_zero_degree.pop_back();
+        result.push_back(t);
+        for (int i = 0; t.p[i] != 0; ++i) {
+            subjects[t.p[i]].in_degree--;
+            if (subjects[t.p[i]].in_degree == 0) {
+                set_of_zero_degree.push_back(subjects[t.p[i]]);
+            }
+        }
+    }
+    if (result.size() == number) {
+        int i = 0;
+        for (; i < result.size() - 1; ++i)
+            cout << result[i].name << " ";
+        cout << result[i].name;
+    }
+    else
+        cout << "Impossible!";
+    return 0;
+}
+/*
+9
+1 2 3 4 5 6 7 8 9
+0
+1 1
+2 1 2
+3 1 2 3
+0
+0
+1 5
+2 5 6
+2 1 2
+*/
+ 
+/**************************************************************
+    Problem: 1073
+    User: 22920142203903
+    Language: C++
+    Result: Accepted
+    Time:130 ms
+    Memory:4068 kb
+****************************************************************/

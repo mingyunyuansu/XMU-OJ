@@ -1,0 +1,101 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+ 
+using namespace std;
+ 
+struct Edge {
+    int head;
+    int data;
+    int weight;
+};
+ 
+struct Vertex {
+    int data;
+    vector<Edge> p;
+};
+ 
+struct cmp {
+    bool operator()(Edge a, Edge b) {
+        return a.weight > b.weight;
+    }
+};
+ 
+int belong[100001];
+Vertex machines[100001];
+vector<int> result;
+vector<Edge> result_of_edge;
+long total = 0;
+int cnt = 1;
+priority_queue<Edge, vector<Edge>, cmp> pq;
+ 
+int find_root(int x) {
+    return x == belong[x] ? x : belong[x] = find_root(belong[x]);
+}
+ 
+int unionSet(int head, int tail, int weight) {
+    head = find_root(head);
+    tail = find_root(tail);
+    if (head == tail)
+        return 0;
+    else {
+        belong[head] = tail;
+        total += weight;
+        cnt++;
+        return 1;
+    }
+}
+ 
+void add_vertex(int from, int to, int weight) {
+    Edge tmp;
+    tmp.head = from;
+    tmp.data = to;
+    tmp.weight = weight;
+    machines[from].p.push_back(tmp);
+    pq.push(tmp);
+}
+ 
+bool result_contains(int v) {
+    for (int i = 0; i < result.size(); ++i) {
+        if (v == result[i])
+            return true;
+    }
+    return false;
+}
+ 
+int main() {
+    int V, E;
+    cin >> V >> E;
+    for (int i = 0; i <= V; i++) {
+        machines[i].data = i;
+        belong[i] = i;
+    }
+    for (int i = 1; i <= E; ++i) {
+        int a, b, w;
+        cin >> a >> b >> w;
+        add_vertex(a, b, w);
+    }
+ 
+    while (!pq.empty()) {
+        Edge tmp = pq.top();
+        pq.pop();
+        unionSet(tmp.head, tmp.data, tmp.weight);
+        //cout << tmp.head << "\t" << tmp.data << "\t" << tmp.weight << endl;
+    }
+    if (cnt != V)
+        cout << -1 << endl;
+    else
+        cout << total << endl;
+ 
+    //system("pause");
+    return 0;
+}
+ 
+/**************************************************************
+    Problem: 1076
+    User: 22920142203903
+    Language: C++
+    Result: Accepted
+    Time:653 ms
+    Memory:12412 kb
+****************************************************************/

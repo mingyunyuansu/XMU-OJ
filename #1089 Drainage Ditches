@@ -1,0 +1,75 @@
+#include <iostream>
+#include <cstring>
+#include<queue>
+ 
+#define INFINITY 2147483647
+#define MAX_N 205
+using namespace std;
+ 
+ 
+int network[MAX_N][MAX_N];
+bool visited[MAX_N];
+int root[MAX_N];
+int num_of_edge, num_of_ver;
+ 
+int max_flow() {
+    int mflow = 0;
+    while (1) {
+        memset(visited, 0, sizeof(visited));
+        memset(root, 0, sizeof(root));
+ 
+        queue<int> Q;
+        visited[1] = true;
+        Q.push(1);
+        while (!Q.empty()) {
+            int cnt = Q.front();
+            Q.pop();
+            if (cnt == num_of_ver) {
+                break;
+            }
+ 
+            for (int i = 1; i <= num_of_ver; i++) {
+                if (!visited[i] && network[cnt][i] > 0) {
+                    visited[i] = true;
+                    Q.push(i);
+                    root[i] = cnt;
+                }
+            }
+        }
+ 
+        if (!visited[num_of_ver]) {
+            break;
+        }
+        int minx = INFINITY;
+        for (int i = num_of_ver; i != 1; i = root[i]) {
+            minx = min(network[root[i]][i], minx);
+        }
+        for (int i = num_of_ver; i != 1; i = root[i]) {
+            network[root[i]][i] -= minx;
+            network[i][root[i]] += minx;
+        }
+        mflow += minx;
+    }
+    return mflow;
+}
+ 
+int main() {
+    cin >> num_of_edge >> num_of_ver;
+    memset(network, 0, sizeof(network));
+    for (int i = 0; i < num_of_edge; i++) {
+        int u, v, cap;
+        cin >> u >> v >> cap;
+        network[u][v] += cap;
+    }
+    cout << max_flow() << endl;
+    //system("pause");
+    return 0;
+}
+/**************************************************************
+    Problem: 1089
+    User: 22920142203903
+    Language: C++
+    Result: Accepted
+    Time:0 ms
+    Memory:1672 kb
+****************************************************************/

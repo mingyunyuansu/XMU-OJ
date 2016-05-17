@@ -1,0 +1,129 @@
+#include <iostream>
+#include <cstring>
+ 
+#define MAXN 1005
+#define MAXM 500100
+#define INF 2147483647
+using namespace std;
+ 
+ 
+int x;
+int current[MAXN], root[MAXN];
+int dis[MAXN], leap[MAXN];
+int augmentation[MAXN], head[MAXN];
+ 
+struct Node {
+    int u, v, w;
+    int next;
+};
+Node edge[MAXM];
+ 
+void addEdge(int u, int v, int w) {
+    edge[x].u = u;
+    edge[x].v = v;
+    edge[x].w = w;
+    edge[x].next = head[u];
+    head[u] = x++;
+ 
+    edge[x].u = v;
+    edge[x].v = u;
+    edge[x].w = 0;
+    edge[x].next = head[v];
+    head[v] = x++;
+}
+ 
+ 
+int SAP(int s, int e, int n) {
+    int max_flow = 0, v, u = s;
+    int id, min_dis;
+    augmentation[s] = INF;
+    root[s] = -1;
+    memset(dis, 0, sizeof(dis));
+    memset(leap, 0, sizeof(leap));
+    leap[0] = n;
+    for (int i = 0; i <= n; ++i) {
+        current[i] = head[i];
+    }
+ 
+    while (dis[s] < n) {
+        bool flag = false;
+        if (u == e) {
+            max_flow += augmentation[e];
+            for (v = root[e]; v != -1; v = root[v]) {
+                id = current[v];
+                edge[id].w -= augmentation[e];
+                edge[id ^ 1].w += augmentation[e];
+                augmentation[v] -= augmentation[e];
+                if (edge[id].w == 0) u = v;
+            }
+        }
+        for (id = current[u]; id != -1; id = edge[id].next) {
+            v = edge[id].v;
+            if (edge[id].w > 0 && dis[u] == dis[v] + 1) {
+                flag = true;
+                root[v] = u;
+                current[u] = id;
+                augmentation[v] = min(augmentation[u], edge[id].w);
+                u = v;
+                break;
+            }
+        }
+        if (!flag) {
+            if (--leap[dis[u]] == 0) break;
+            min_dis = n;
+            current[u] = head[u];
+            for (id = head[u]; id != -1; id = edge[id].next) {
+                v = edge[id].v;
+                if (edge[id].w > 0 && dis[v] < min_dis) {
+                    min_dis = dis[v];
+                    current[u] = id;
+                }
+            }
+            dis[u] = min_dis + 1;
+            leap[dis[u]]++;
+            if (u != s) u = root[u];
+        }
+    }
+    return max_flow;
+}
+ 
+int main() {
+    int t, num_of_mission, num_of_machine, pi, si, ei;
+    int Max, sum, source, termination, vn;
+    cin >> t;
+    for (int T = 1; T <= t; ++T) {
+        x = 0;
+        memset(head, -1, sizeof(head));
+        sum = 0;
+        source = 0;
+        Max = 0;
+        cin >> num_of_mission >> num_of_machine;
+        for (int i = 1; i <= num_of_mission; ++i) {
+            cin >> pi >> si >> ei;
+            sum += pi;
+            Max = max(Max, ei);
+            addEdge(source, i, pi);
+            for (int j = si; j <= ei; ++j) {
+                addEdge(i, num_of_mission + j, 1);
+            }
+        }
+        termination = num_of_mission + Max + 1;
+        vn = termination + 1;
+        for (int i = 1; i <= Max; ++i) {
+            addEdge(num_of_mission + i, termination, num_of_machine);
+        }
+        if (SAP(source, termination, vn) == sum)
+            cout << "Yes" << endl;
+        else cout << "No" << endl;
+    }
+    return 0;
+}
+ 
+/**************************************************************
+    Problem: 1595
+    User: 22920142203903
+    Language: C++
+    Result: Accepted
+    Time:49 ms
+    Memory:9340 kb
+****************************************************************/
